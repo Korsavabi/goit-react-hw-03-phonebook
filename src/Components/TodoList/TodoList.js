@@ -19,10 +19,8 @@ class TodoList extends Component {
            })
        }
     }
-    componentDidUpdate(prevState){
-        if(prevState.contacts !== this.state.contacts){
-            localStorage.setItem('contacts', JSON.stringify(this.state.contacts));
-        }
+    componentDidUpdate(){
+        localStorage.setItem('contacts', JSON.stringify(this.state.contacts));
     }
 
     addTask = (objTask) => {
