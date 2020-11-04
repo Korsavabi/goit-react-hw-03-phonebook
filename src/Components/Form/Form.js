@@ -19,8 +19,7 @@ class Form extends Component {
         const { name, number } = this.state;
         const singleTask = {
             name,
-            number,
-            id: uuidv4()
+            number
         }
         this.props.addTask(singleTask);
         this.setState({

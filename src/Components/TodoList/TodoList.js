@@ -8,40 +8,50 @@ import './TodoList.css';
 class TodoList extends Component {
 
     state = {
-        contacts: [
-            { id: 'id-1', name: 'Rosie Simpson', number: '459-12-56' },
-            { id: 'id-2', name: 'Hermione Kline', number: '443-89-12' },
-            { id: 'id-3', name: 'Eden Clements', number: '645-17-79' },
-            { id: 'id-4', name: 'Annie Copeland', number: '227-91-26' },
-        ],
+        contacts: [],
         filter: ''
     }
+    componentDidMount(){
+        const perslistedContacts = localStorage.getItem('contacts');
+       if(perslistedContacts){
+           this.setState({
+            contacts: JSON.parse(perslistedContacts) 
+           })
+       }
+    }
+    componentDidUpdate(prevState){
+        if(prevState.contacts !== this.state.contacts){
+            localStorage.setItem('contacts', JSON.stringify(this.state.contacts));
+        }
+    }
+
     addTask = (objTask) => {
         const { name } = objTask;
         if (this.state.contacts.every((contact) => !contact.name.includes(name))) {
             this.setState((prev) => ({
-                contacts: [...prev.contacts, objTask]
+                contacts: [...prev.contacts, { ...objTask, id: uuidv4() }]
             }))
         } else alert(`${name} is already in contacts`);
     }
+
     deleteTask = (id) => {
         this.setState((prev) => ({
             contacts: prev.contacts.filter((el) => el.id !== id)
         }))
     }
-   
-    searchItem = () =>{
-        return this.state.contacts.filter(contact => 
-            contact.name.toLowerCase().includes(this.state.filter.toLowerCase()),);
-     }
-     inputHandler = ({ target }) => {
-        const { value, name  } = target;
+    
+    searchItem = () => {
+        return this.state.contacts.filter(contact =>
+            contact.name.toLowerCase().includes(this.state.filter.toLowerCase()));
+    }
+    inputHandler = ({ target }) => {
+        const { value, name } = target;
         this.setState({
             [name]: value
         })
     }
     render() {
-const {contacts, filter}=this.state;
+        const { contacts, filter } = this.state;
         return (
             <div className="box__form">
                 <div className="form__user-phone">
@@ -49,9 +59,9 @@ const {contacts, filter}=this.state;
                     <Form addTask={this.addTask} />
                 </div>
                 <h2 className="title">Contacts:</h2>
-                <SearchForm filter={filter} inputHandler={this.inputHandler}/>
+                <SearchForm filter={filter} inputHandler={this.inputHandler} />
 
-                <Todo deleteTask={this.deleteTask} contacts={ filter ?   this.searchItem():contacts}/>
+                <Todo deleteTask={this.deleteTask} contacts={filter ? this.searchItem() : contacts} />
             </div>
         );
     }
